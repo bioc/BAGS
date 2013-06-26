@@ -1,0 +1,4 @@
+useDynLib(GeneGroupAnalysis)
+import("AnnotationDbi","annotate","tcltk", "breastCancerVDX","rheumaticConditionWOLLBOLD","hgu133a.db","hgu133plus2.db")
+export(ArrayInfoFun,GeneMaxVarFun,GeneGrps2AffyGrpsFun,SizeGOAffyGrps,MCMCData.cs,MCMCData.ts,GibbsFun.cs,GibbsNPFun.ts,
+GibbsAllFun.ts)

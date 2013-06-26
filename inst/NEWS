@@ -1,0 +1,4 @@
+version 1.1:
+
+  o Considering on having more flexibility on the linear models that can be fitted
+    by the Gibb's sampler.
