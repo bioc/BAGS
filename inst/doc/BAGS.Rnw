@@ -1,0 +1,241 @@
+%\VignetteIndexEntry{BAGS: A Bayesian Approach for Geneset Selection.}
+%\VignetteDepends{}
+%\VignetteSuests{}
+%\VignetteKeywords{Breast Cancer, Survival Analysis, GeneExpression, DifferentialExpression}
+%\VignettePackage{}
+
+\documentclass[12pt]{article}
+
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage[numbers]{natbib}
+\usepackage[american]{babel}
+\usepackage{authblk}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{Sweave}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+%------------------------------------------------------------
+% newcommand
+%------------------------------------------------------------
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rclass}[1]{\textit{#1}}
+\newcommand{\Rpackage}[1]{\textit{#1}}
+\newcommand{\Rexpression}[1]{\texttt{#1}}
+\newcommand{\Rmethod}[1]{{\texttt{#1}}}
+\newcommand{\Rfunarg}[1]{{\texttt{#1}}}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+%------------------------------------------------------------
+\title{\vspace{-2cm}\Rpackage{BAGS}:  A Bayesian Approach for Geneset Selection.}
+%------------------------------------------------------------
+\author[1]{Alejandro Quiroz-Z\'{a}rate}
+\author[2]{Benjamin Haibe-Kains}
+\author[1]{John Quackenbush}
+
+\affil[1]{Biostatistics and Computational Biology, Dana-Farber Cancer Institute, Boston, Massachusetts, United States of America}
+\affil[2]{Bioinformatics and Computational Genomics Laboratory, Institut de Recherches Cliniques de Montr\'{e}al, Montreal, Quebec, Canada.}
+
+\SweaveOpts{highlight=TRUE, tidy=TRUE, keep.space=TRUE, keep.blank.space=FALSE, keep.comment=TRUE, keep.source=true}
+
+%<<setup,echo=FALSE>>=
+%library(pgfSweave)
+%setCacheDir("cache")
+%options(keep.source=TRUE)
+%@
+
+\maketitle
+\tableofcontents
+
+%------------------------------------------------------------
+\clearpage
+\section{Introduction}
+%------------------------------------------------------------ 
+The \Rpackage{BAGS} package provides functions to perform statistical identification of gene functional classes that behave in a distinct manner between the phenotypes of interest for datasets under cross-sectional or time series designs. This package includes (i) functions to perform gene set comparison (ii) examples to visualize the results of such comparisons.
+
+
+The \Rpackage{BAGS} package provides functions to perform statistical identification of gene functional classes that behave in a distinct manner on datasets with cross-sectional or time series design, having 2 and up to 5 different phenotypes of interest or 2 up to 5 different time points
+%------------------------------------------------------------
+\subsection{Installation}
+%------------------------------------------------------------ 
+\Rpackage{BAGS} requires \Rpackage{R} (>= 2.10.0) installed. To install 	 	
+\Rpackage{BAGS}, source biocLite from bioconductor:
+ 
+<<install-pkg, eval=false>>=
+source("http://bioconductor.org/biocLite.R")
+biocLite("BAGS")
+@
+ 
+Load the \Rpackage{BAGS}, into your current workspace:
+<<eval=false>>=
+library(BAGS)
+@ 
+%------------------------------------------------------------
+\subsection{Further help}
+%------------------------------------------------------------ 
+To view the \Rpackage{BAGS} description and a summary of all the functions within \Rpackage{BAGS}, type the following:
+ 
+<<eval=false>>=
+library(help=BAGS)
+@
+%------------------------------------------------------------
+\subsection{Citing}
+%------------------------------------------------------------ 
+We are delighted if you use this package. Please do email us if you find a bug or have a suggestion.  We would be very grateful if you could cite:\\
+
+Quiroz-Zarate A, Haibe-Kains B and Quackenbush J (2013). \textit{Manuscript in preparation}\\
+
+\newpage
+%------------------------------------------------------------
+\section{An application in Breast cancer.}
+%------------------------------------------------------------ 
+We will very briefly demonstrate the use of some functions in \Rpackage{BAGS} by providing its application on a cross-sectional datasets.\\
+ 
+We use the \Rpackage{breastCancerVDX} data library from Bioconductor for demonstration purposes under a cross-sectional design. This data set corresponds to the data set from \cite{Minn2007}. Minn, AJ  and colleagues used Affymetrix U133A Gene Chips to profile gene expression in $286$ fresh-frozen tumor samples from patients with lymph-node-negative breast cancer who were treated during $1980-95$, but who did not receive systemic neoadjuvant or adjuvant therapy. These samples correspond from the data set used in \cite{Wang2005} with GEO reference accession number GSE2034, from the tumor bank at the Erasmus Medical Center in Rotterdam, Netherlands. An additional $58$ estrogen receptor-negative samples were added from \cite{Minn2007} GEO (GSE5327). In total $209$ tumor samples are classified as ER+ and $135$ as ER-. Even though this data set comes from a $5$-year follow-up design, the way the data is conceived for this analysis is cross-sectional.\\
+ 
+%%------------------------------------------------------------
+\subsection{Example: Data analysis under a cross-sectional setting.}
+%%------------------------------------------------------------ 
+This is an example on how to perform an analysis with the proposed method in \cite{Quiroz2013} for a data set with cross-sectional design. This example is divided in two parts. The data preparation and the execution of the Gibb's sampler function.
+% 
+%------------------------------------------------------------
+\subsubsection{Data preprocessing stage}
+%------------------------------------------------------------ 
+The original gene expression data set Minn AJ and colleagues \cite{Minn2007} has a U133A Affymetrix platform. The normalized data set was saved to the variable \Robject{vdx} in the \Rpackage{breastCancerVDX} data library from Bioconductor. 
+\footnotesize
+<<eval=true>>=
+library(BAGS)
+library(breastCancerVDX)
+library(Biobase)
+ 
+data(vdx)
+gene.expr=exprs(vdx)   # Gene expression of the package
+vdx.annot=fData(vdx)   # Annotation associated to the dataset
+vdx.clinc=pData(vdx)   # Clinical information associated to the dataset 
+ 
+# Identifying the sample identifiers associated to ER+ and ER- breast cancer
+er.pos=which(vdx.clinc$er==1)
+er.neg=which(vdx.clinc$er==0)
+ 
+# Only keep columns 1 and 3, probeset identifiers and Gene symbols respectively
+vdx.annot=vdx.annot[,c(1,3)]
+
+# Checking if the probeset are ordered with respect to the dataset
+all(rownames(gene.expr)==as.character(vdx.annot[,1]))  
+# Checking if the sample identifiers are order with respect to the dataset
+all(colnames(gene.expr)==as.character(vdx.clinc[,1]))  
+# Changing the row identifiers to the gene identifiers of interest
+rownames(gene.expr)=as.character(vdx.annot[,2])        
+ 
+#= Because we have several measurements for a gene, we filter the genes
+# Function to obtain the genes with highest variabilty among phenotypes
+gene.nms.u=unique(rownames(gene.expr))
+gene.nms=rownames(gene.expr)
+indices=NULL
+for(i in 1:length(gene.nms.u))
+{
+	aux=which(gene.nms==gene.nms.u[i])
+ 	if(length(aux)>1){
+ 		var.r = apply(cbind(apply(gene.expr[aux,er.pos],1,mean),
+                         apply(gene.expr[aux,er.neg],1,mean)),1,var)
+		aux=aux[which.max(var.r)]
+  	}
+  indices=c(indices,aux)
+}
+#===== Only keep the genes with most variability among the phenotypes of interest
+gene.expr=gene.expr[indices,]
+gene.nams=rownames(gene.expr)     # The gene symbols of interest are stored here
+@
+\normalsize 
+In order to implement the Gibb's sampler procedure the dataset needs to be transformed to a data set with functional class expression measurements. Only Molecular functions from GO with at least 5 genes are considered for this analysis
+\footnotesize
+<<eval=true>>=
+data(AnnotationMFGO,package="BAGS")
+data.gene.grps=DataGeneSets(AnnotationMFGO,gene.nams,5)
+phntp.list=list(er.pos,er.neg)
+data.mcmc=MCMCDataSet(gene.expr,data.gene.grps$DataGeneSetsIds,phntp.list)
+@
+\normalsize
+%------------------------------------------------------------
+\subsubsection{Gibb's sampler executable example}
+%------------------------------------------------------------ 
+To implement the Gibbs sampler we need to define the empty objects in which the posterior samples of the parameters of interest are to be kept.  The Gibb's sampler implementation is in the following way (toy example):
+
+\footnotesize
+<<eval=true>>=
+noRow=dim(data.mcmc$y.mu)[1]
+noCol=unlist(lapply(phntp.list,length))
+iter=10000
+GrpSzs=data.gene.grps$Size
+YMu=data.mcmc$y.mu
+L0=rep(2,2)
+V0=rep(4,2)
+L0A=rep(3,1)
+V0A=rep(3,1)
+MM=0.55
+AAPi=10
+ApriDiffExp=floor(dim(data.mcmc$y.mu)[1]*0.03)
+results=matrix(0,noRow,iter)
+ 		
+mcmc.chains=Gibbs2(noRow,noCol,iter,GrpSzs,YMu,L0,V0,L0A,V0A,MM,AAPi,ApriDiffExp,
+                   results)
+@ 		
+<<fig=true,eps=false>>=
+burn.in=2000
+alfa.pi=apply(mcmc.chains[[1]][,burn.in:iter],1,function(x){
+ 	                        y=length(which(x!=0))/length(burn.in:iter);return(y)})
+
+plot(alfa.pi,type="h",main="Probabilities of MF differentially expressed
+     between ER status")                                   
+cut.off=0.9
+abline(h=cut.off,col="red")
+differential.processes=names(data.gene.grps$Size)[which(alfa.pi>cut.off)]
+@
+\normalsize
+%------------------------------------------------------------
+\section{Session Info}
+%------------------------------------------------------------ 
+<<sessionInfo,echo=FALSE,results=tex>>==
+toLatex(sessionInfo())
+@
+%------------------------------------------------------------
+% BIBLIO
+%------------------------------------------------------------ 
+\begin{thebibliography}{10}
+ 
+\bibitem{Minn2007}
+Minn AJ, Gupta GP, Padua D, Bos P, Nguyen DX, Nuyten D, Kreike B, Zhang Y, Wang Y, Ishwaran H, Foekens JA, Van de Vijver M and Massagu\'{e} J:
+\newblock Lung Metastasis Genes Couple Breast Tumor Size and Metastatic Spread.
+\newblock \textit{PNAS}, \textbf{104(16)}, 6740-6745. 2007.
+% 
+\bibitem{Quiroz2013}
+Quiroz-Zarate A and  Quackenbush J
+\newblock XXXX: Genes as repeated measures of gene-set significance \textit{Journal}  
+\newblock \textbf{Vol(Num):Page 1-Page N}. 2011.
+% 
+\bibitem{Wang2005}
+Wang Y, Klijn JGM, Zhang Y, Sieuwerts AM, Look MP, Yanh F, Talantov D, Timmermans M, Gelder, MEMG, Yu J, Jatkoe T, Berns EMJJ, Atkins D and Foekens JA:
+\newblock Gene-expression Profiles to Predict Distant Metastasis of Lymph-Node-Negative Primary Breast Cancer.
+\newblock \textit{Lancet}, \textbf{365}, 671-679. 2005.
+% 
+\end{thebibliography}
+
+\end{document}
