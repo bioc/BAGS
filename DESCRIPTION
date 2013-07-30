@@ -1,25 +1,13 @@
-Package: GeneGroupAnalysis
+Package: BAGS
 Type: Package
-Title: Gene Functional Class Analysis
-Version: 1.7.0
-Date: 2011-10-05
-Author: Alejandro Quiroz-Zarate and John Quackenbush
-Maintainer: Alejandro Quiroz-Zarate <aquiroz@hsph.harvard.edu>
-Description: R package providing functions to peform gene-set significance analysis over simple cross-sectional or time series data designs. 
-biocViews: GeneExpression, DifferentialExpression, MultipleComparisons,
-        CrossSectional, TimeCourse
-Depends: R (>= 2.10), MCMCpack, GO.db, breastCancerVDX,
-        rheumaticConditionWOLLBOLD, hgu133a.db, hgu133plus2.db
-Imports: AnnotationDbi, annotate, tcltk
+Title: A Bayesian Approach for Geneset Selection
+Version: 2.0
+Date: 2013-06-12
+Author: Alejandro Quiroz-Zarate
+Maintainer: Alejandro Quiroz-Zarate <aquiroz@jimmy.harvard.edu>
+Description: R package providing functions to perform geneset significance analysis over simple cross-sectional data between 2 and 5 phenotypes of interest.
+Depends: R (>= 2.10), breastCancerVDX, Biobase
 License: Artistic-2.0
-Collate: ArrayInfoFun.R GeneMaxVarFun.R GrpMeanDataFun.R
-        MakeAffyOrderGrp.Fun.R MeanMatGrps.Aux.ts.R
-        GeneGrps2AffyGrpsFun.R SizeGOAffyGrps.R MCMCData.cs.R
-        MCMCData.ts.R Alfa.Aux.cs.R Alfa0NPCFun.ts.R AlfaAllCFun.ts.R
-        AlfaFun.cs.R AlfaNPCFun.ts.R Beta.Aux.cs.R BetaCFun.ts.R
-        BetaFun.cs.R PiFun.R RhoFun.R SgmAlfaFun.cs.R SgmAlfaFun.ts.R
-        SgmAprGrps.Aux.ts.R SgmY.Aux.cs.R SgmYCFun.ts.R SgmYFun.cs.R
-        GibbsFun.cs.R GibbsAllFun.ts.R GibbsNPFun.ts.R
+Collate: DataGeneSets.R Gibbs5.R Gibbs4.R Gibbs3.R Gibbs2.R GrpMean.R MCMCDataSet.R ReadGMT.R
 LazyLoad: yes
-URL: http://compbio.dfci.harvard.edu/
-
+URL http://compbio.dfci.harvard.edu/

@@ -8,13 +8,12 @@
 #include "libmat.h"  //Las librerias que hacen las matrices y la impresion de los arrelgos.
 #define TINY 1.0e-20  // Se definio para LU y la inversa de las matrices.
 
-void LUdcmp(double **A, int *nn, int *indx)
+void LUdcmp(double **A, int n, int *indx)
 {
-	int i, j, k, imax, n;
+	int i, j, k, imax;
 	double big,temp,sum,dum;
 	double *vv;
 	
-	n=*nn;
 	vv=array1(n);
 	
     for(i=0;i<n;i++)
@@ -90,12 +89,12 @@ void LUdcmp(double **A, int *nn, int *indx)
 }
 
 
-void LUbksb(double **A, int *nn, int *indx, double *b)
+void LUbksb(double **A, int n, int *indx, double *b)
 {
-	int i,ii,ip,j,n,contador; 
+	int i,ii,ip,j,contador; 
 	double sum;
 	
-	n=*nn;
+    ii=0;
 	contador=0;
 	
 	for(i=0;i<n;i++)
