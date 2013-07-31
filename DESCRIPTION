@@ -1,0 +1,13 @@
+Package: BAGS
+Type: Package
+Title: A Bayesian Approach for Geneset Selection
+Version: 2.1.0
+Date: 2013-06-12
+Author: Alejandro Quiroz-Zarate
+Maintainer: Alejandro Quiroz-Zarate <aquiroz@jimmy.harvard.edu>
+Description: R package providing functions to perform geneset significance analysis over simple cross-sectional data between 2 and 5 phenotypes of interest.
+Depends: R (>= 2.10), breastCancerVDX, Biobase
+License: Artistic-2.0
+Collate: DataGeneSets.R Gibbs5.R Gibbs4.R Gibbs3.R Gibbs2.R GrpMean.R MCMCDataSet.R ReadGMT.R
+LazyLoad: yes
+URL http://compbio.dfci.harvard.edu/
