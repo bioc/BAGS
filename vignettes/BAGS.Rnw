@@ -80,8 +80,9 @@ The \Rpackage{BAGS} package provides functions to perform statistical identifica
 \Rpackage{BAGS}, source biocLite from bioconductor:
  
 <<install-pkg, eval=false>>=
-source("http://bioconductor.org/biocLite.R")
-biocLite("BAGS")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("BAGS")
 @
  
 Load the \Rpackage{BAGS}, into your current workspace:
