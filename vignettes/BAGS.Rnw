@@ -77,7 +77,7 @@ The \Rpackage{BAGS} package provides functions to perform statistical identifica
 \subsection{Installation}
 %------------------------------------------------------------ 
 \Rpackage{BAGS} requires \Rpackage{R} (>= 2.10.0) installed. To install 	 	
-\Rpackage{BAGS}, source biocLite from bioconductor:
+\Rpackage{BAGS} from bioconductor:
  
 <<install-pkg, eval=false>>=
 if (!requireNamespace("BiocManager", quietly=TRUE))
