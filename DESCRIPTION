@@ -1,7 +1,7 @@
 Package: BAGS
 Type: Package
 Title: A Bayesian Approach for Geneset Selection
-Version: 2.36.0
+Version: 2.37.0
 Date: 2013-06-12
 Author: Alejandro Quiroz-Zarate
 Maintainer: Alejandro Quiroz-Zarate <aquiroz@jimmy.harvard.edu>
